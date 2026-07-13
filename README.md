@@ -13,7 +13,7 @@ midPoint as the identity governance engine, integrating a simulated HR data sour
 (CSV) with an OpenLDAP directory as the target system.
 
 ## Architecture
-![Architecture Diagram](iga-lab-architecture.png)
+![Architecture Diagram](iga-lifecycle-architecture.png)
 
 ## What I Built
 [PLACEHOLDER — describe midPoint setup, connector configuration, data mapping 
