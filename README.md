@@ -8,10 +8,17 @@ left behind after someone leaves), which are a frequent finding in security audi
 and a real attack vector.
 
 ## Solution Overview
-Built an automated Joiner-Mover-Leaver (JML) identity lifecycle workflow using 
-midPoint as the identity governance engine, integrating a simulated HR data source 
-(CSV) with an OpenLDAP directory as the target system.
 
+Built an automated Joiner-Mover-Leaver (JML) identity lifecycle workflow using 
+midPoint as the identity governance engine, integrating a simulated HR data 
+source (CSV) with an OpenLDAP directory as the target system. The specific 
+tools used here — midPoint and OpenLDAP — are illustrative rather than 
+prescriptive; the same lifecycle pattern applies regardless of which IGA 
+engine or directory service sits underneath it (e.g. SailPoint, Active 
+Directory, Entra ID). What this project demonstrates is the underlying 
+identity governance logic — a defined source of truth, automated 
+reconciliation, and lifecycle-driven provisioning — rather than proficiency 
+in any single vendor's product.
 ## Scope Note
 This project focuses on the core mechanics of identity governance and lifecycle 
 automation — specifically, automated Joiner-Mover-Leaver (JML) provisioning and 
