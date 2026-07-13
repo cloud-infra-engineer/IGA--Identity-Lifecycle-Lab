@@ -12,6 +12,11 @@ Built an automated Joiner-Mover-Leaver (JML) identity lifecycle workflow using
 midPoint as the identity governance engine, integrating a simulated HR data source 
 (CSV) with an OpenLDAP directory as the target system.
 
+## Scope Note
+This project focuses on the core mechanics of identity governance and lifecycle 
+automation — specifically, automated Joiner-Mover-Leaver (JML) provisioning and 
+deprovisioning. 
+
 ## Architecture
 ![Architecture Diagram](iga-lifecycle-architecture.png)
 
@@ -37,10 +42,6 @@ Automated provisioning and deprovisioning eliminates the manual gap that leads
 to orphaned accounts, and provides a full audit trail of every identity change — 
 directly reducing the compliance risk described above.
 
-## Scope Note
-This project focuses on the core mechanics of identity governance and lifecycle 
-automation — specifically, automated Joiner-Mover-Leaver (JML) provisioning and 
-deprovisioning. 
 
 Deliberately out of scope for this project: access reviews, entitlement 
 certification, and broader identity governance features. These are covered 
