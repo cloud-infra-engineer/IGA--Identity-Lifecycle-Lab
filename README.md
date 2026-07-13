@@ -21,9 +21,46 @@ deprovisioning.
 ![Architecture Diagram](iga-lifecycle-architecture.png)
 
 ## What I Built
-[PLACEHOLDER — describe midPoint setup, connector configuration, data mapping 
-between CSV attributes and LDAP schema, JML trigger logic]
+## What I Built
 
+I configured midPoint as the identity governance engine sitting between a 
+simulated HR source system (CSV-based) and an OpenLDAP directory as the target.
+
+**Connectivity setup:** Configured and tested both resource connections in 
+midPoint — the HR CSV source and the OpenLDAP target — confirming successful 
+communication with each before building any workflow logic on top ("Test 
+Connection succeeded" on both).
+
+**Joiner workflow (in progress):** Built out the first stage of the 
+Joiner-Mover-Leaver lifecycle — the Joiner process — which follows this flow:
+
+1. A new employee record is added directly in the HR source (CSV) — the 
+   system of record for identity data (name, department, role, etc.).
+2. An HR reconciliation task in midPoint pulls that new record in, creating 
+   the corresponding identity inside midPoint.
+3. Verified the new identity appeared correctly in midPoint after running 
+   the HR reconciliation task.
+4. A second reconciliation task, run against the OpenLDAP resource, pushes 
+   that identity out to the LDAP directory, creating the actual account.
+5. Verified the account appeared correctly in LDAP using an LDAP browser.
+
+This demonstrates the core mechanic of automated provisioning: identity data 
+flows one-way from the authoritative HR source, through midPoint's governance 
+and transformation layer, out to the target directory — with no manual account 
+creation required at any point in the chain.
+
+**Design consideration — reconciliation frequency:** In this lab, reconciliation 
+was triggered manually to clearly observe each stage of the JML flow as it 
+happened. In a production environment, this would typically run on a scheduled 
+interval rather than manually — the appropriate frequency depends on the 
+organization's size and rate of change. A large enterprise with high hire/leaver 
+volume might reconcile every 15–30 minutes to minimize the window where access 
+is out of date, whereas a smaller organization might run it nightly. This is a 
+tuning decision balanced against system load versus how urgently new access or 
+account disablement needs to take effect.
+
+*(Mover and Leaver stages, plus attribute-mapping detail and any further 
+transformation logic required, to be added as the lab progresses.)*
 ## Troubleshooting & Problems I Hit
 Issue: SSH access unclear (no username specified)
 The lab guide said to SSH in using the IP and port, but didn't clearly state the login username — it was buried in a sentence rather than listed clearly. Had to reread the instructions carefully to spot that "using root" meant the username was root, not just descriptive text. Lesson: always check for a username explicitly before assuming SSH will prompt for one.
