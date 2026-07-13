@@ -20,9 +20,17 @@ midPoint as the identity governance engine, integrating a simulated HR data sour
 between CSV attributes and LDAP schema, JML trigger logic]
 
 ## Troubleshooting & Problems I Hit
-[PLACEHOLDER — document each real issue as: what broke, how you diagnosed it, 
-what you changed, how you confirmed the fix. E.g. attribute type mismatches 
-between CSV fields and LDAP schema.]
+Issue: SSH access unclear (no username specified)
+The lab guide said to SSH in using the IP and port, but didn't clearly state the login username — it was buried in a sentence rather than listed clearly. Had to reread the instructions carefully to spot that "using root" meant the username was root, not just descriptive text. Lesson: always check for a username explicitly before assuming SSH will prompt for one.
+Issue: PuTTY copy-paste not working via trackpad
+
+Struggled to copy commands from the browser instructions into the PuTTY terminal — right-click paste didn't work reliably on the laptop trackpad. Resolved by using the keyboard shortcut Shift+Insert to paste directly into PuTTY instead of relying on trackpad right-click/two-finger tap.
+Issue: Login attempts failing / temporary lockout
+
+Got locked out of SSH login temporarily after a few failed password attempts — standard SSH brute-force protection, not a fault with the VM. Waited a short time before retrying rather than repeatedly attempting, which resolved it once the correct username/password combination was confirmed.
+Issue: midPoint service not showing as "up" after starting the lab
+
+After running the start script, phpLDAPadmin and SimplifyHR came up immediately, but midPoint did not, and the web console at localhost:8080/midpoint returned a connection error. This wasn't an actual failure — midPoint takes noticeably longer to boot than the other services on first startup, since it initializes its own internal database and connectors. Re-checking the status script and refreshing the browser after waiting a few minutes confirmed midPoint had come up successfully. Lesson: don't assume a service has failed just because it isn't immediately up — check again after allowing more startup time, especially for Java-based platforms like midPoint.
 
 ## Business Outcome
 Automated provisioning and deprovisioning eliminates the manual gap that leads 
