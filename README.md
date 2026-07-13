@@ -30,6 +30,13 @@ to orphaned accounts, and provides a full audit trail of every identity change â
 directly reducing the compliance risk described above.
 
 ## Scope Note
-This project focuses on core IGA lifecycle mechanics. Access reviews and broader 
-identity governance features are covered separately in the Entra ID Governance 
-project, once fully integrated in the hybrid enterprise (Project 3).
+This project focuses on the core mechanics of identity governance and lifecycle 
+automation â€” specifically, automated Joiner-Mover-Leaver (JML) provisioning and 
+deprovisioning. 
+
+Deliberately out of scope for this project: access reviews, entitlement 
+certification, and broader identity governance features. These are covered 
+separately in a later project using Entra ID Governance, once integrated into 
+the full hybrid enterprise environment. This scoping decision keeps each project 
+focused and demonstrable in depth, rather than attempting to cover every IAM 
+capability shallowly across a single lab.
