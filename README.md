@@ -95,6 +95,14 @@ The lab guide's instructions for creating and running an HR reconciliation task 
 
 Resolved by working through each tab systematically to identify the functional equivalent of each step described in the guide, rather than relying on exact button names. Confirmed success by checking that the HR record created earlier correctly appeared in midPoint's Users section after running the task.
 
+A note on automation's blind spot
+Automation solves the problem of manual processes not keeping pace with scale, but it introduces a different risk: because the process runs in the background, nobody sees it happening day to day, and it's easy to assume it's working correctly simply because nobody's had to think about it. 
+
+A Mover event that silently adds new group access without removing the old is precisely the kind of thing that can go unnoticed for a long time in an automated system — someone accumulates permissions from two or three past roles they no longer need, and because no human is manually reviewing each change, it's rarely caught until an access review or an audit surfaces it.
+
+This is why automation on its own isn't a complete solution — it needs an oversight layer, typically in the form of periodic access reviews and entitlement certification (available in tools like midPoint, Entra ID Governance, or equivalent, depending on the platform in use). Automation handles the speed and consistency problem; governance oversight handles the "is this still correct" problem. Neither replaces the other. This is also why access reviews were named as a deliberate scope boundary earlier in this project — they represent the next layer this lifecycle would need in a real enterprise deployment.
+
+
 ## Business Outcome
 
 Automated provisioning and deprovisioning eliminates the manual gap that leads to orphaned accounts, and provides a full audit trail of every identity change — directly reducing the compliance risk described above.
