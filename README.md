@@ -41,6 +41,19 @@ I configured midPoint as the identity governance engine sitting between a simula
 
 This demonstrates the core mechanic of automated provisioning: identity data flows one-way from the authoritative HR source, through midPoint's governance and transformation layer, out to the target directory — with no manual account creation required at any point in the chain.
 
+**Leaver workflow:** Built out the second stage of the Joiner-Mover-Leaver lifecycle — the Leaver process — which follows this flow:
+
+1. An employee's status is changed to Terminated directly in the HR source (SimplifyHR) — the same authoritative source used for the Joiner event.
+2. Re-ran the existing HR reconciliation task in midPoint (the same task created for the Joiner event — no new task needed, confirming these tasks are reusable across all lifecycle events, not single-use).
+3. midPoint detected the status change and triggered the Leaver workflow automatically — disabling the identity and updating its projection to OpenLDAP.
+4. Verified in midPoint (Users → All Users) that James Anderson's status now shows Disabled, and confirmed via the Projections tab that the OpenLDAP projection reflected this.
+5. Verified directly in phpLDAPadmin that James Anderson's account had moved from `ou=people` to `ou=inactive` — confirming the change had actually propagated to the target directory, not just midPoint's internal record.
+
+![James Anderson before termination](james-anderson-before.png)
+![James Anderson after termination in LDAP inactive OU](james-anderson-after.png)
+
+**Design principle — disable, don't delete:** The account was not deleted on termination, and this is deliberate rather than a limitation. Standard enterprise practice is to disable an account immediately on termination, then delete it only after a defined retention period (commonly 30–90 days). This balances two competing risks: an active account for a departed employee is a security exposure, but immediate deletion removes the ability to investigate, recover data, or audit activity if a question arises after the person has left. Moving the account to an inactive state (rather than deleting it) achieves the security goal
+
 **Design consideration — reconciliation frequency:** In this lab, reconciliation was triggered manually to clearly observe each stage of the JML flow as it happened. In a production environment, this would typically run on a scheduled interval rather than manually — the appropriate frequency depends on the organization's size and rate of change. A large enterprise with high hire/leaver volume might reconcile every 15–30 minutes to minimize the window where access is out of date, whereas a smaller organization might run it nightly. This is a tuning decision balanced against system load versus how urgently new access or account disablement needs to take effect.
 
 *(Mover and Leaver stages, plus attribute-mapping detail and any further transformation logic required, to be added as the lab progresses.)*
