@@ -68,6 +68,22 @@ Verified in midPoint (Users → All Users) that James Anderson's status now show
 
 ![James inactive in LDAP](James%20inactive%20in%20ldap.png)
 
+**Rehire / Reactivation workflow**
+
+An employee's status is changed back to Active directly in the HR source (SimplifyHR) — testing the rehire scenario, which is common in real enterprise environments.
+
+![James Anderson reactivated in HR](james%20anderson%20reactivated%20in%20HR.png)
+
+Re-ran the existing HR reconciliation task in midPoint — the same reused task from both the Joiner and Leaver events, confirming once again that a single reconciliation task handles every lifecycle event rather than needing separate tasks per scenario.
+
+![James Anderson reconciled in midPoint](James%20reconciled%20in%20Midpoint.png)
+
+midPoint detected the status change and reversed the Leaver action automatically — reactivating the identity and updating its projection to OpenLDAP. Verified directly in phpLDAPadmin that James Anderson's account had moved back from `ou=inactive` to `ou=people`, confirming the account was correctly re-enabled in the target directory, not just internally in midPoint.
+
+![James back active in LDAP](James%20back%20active%20in%20LDAP.png)
+
+This confirms the JML lifecycle works bidirectionally, not just in one direction — the same reconciliation logic that disables an account on termination correctly reverses that action on rehire, without needing separate logic or a new task built specifically for reactivation.
+
 **Design principle — disable, don't delete:** The account was not deleted on termination, and this is deliberate rather than a limitation. Standard enterprise practice is to disable an account immediately on termination, then delete it only after a defined retention period (commonly 30–90 days). This balances two competing risks: an active account for a departed employee is a security exposure, but immediate deletion removes the ability to investigate, recover data, or audit activity if a question arises after the person has left. Moving the account to an inactive state (rather than deleting it) achieves the security goal immediately while preserving the option to investigate or reverse the action during the retention window.
 
 This reinforces the same underlying principle demonstrated in the Joiner workflow: HR remains the single source of truth, and every downstream system — midPoint, then LDAP — updates automatically in response to a change at the source, without manual intervention at the target.
