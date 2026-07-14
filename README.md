@@ -38,6 +38,13 @@ A second reconciliation task, run against the OpenLDAP resource, pushes that ide
 
 This demonstrates the core mechanic of automated provisioning: identity data flows one-way from the authoritative HR source, through midPoint's governance and transformation layer, out to the target directory — with no manual account creation required at any point in the chain.
 
+**Mover workflow:**
+
+The Mover stage of the JML lifecycle covers an existing employee changing department or role, rather than joining or leaving the organisation. This lab's SimplifyHR portal only supports adding a new employee (Joiner) and terminating one (Leaver) — there's no function to edit an existing employee's department, so this stage isn't backed by screenshots the way Joiner and Leaver are.
+The process itself, however, is identical in principle to what's already been demonstrated twice in this lab: change the employee's department in HR, run the reconciliation task in the IGA engine (scheduled automatically in a real enterprise environment, rather than run manually as in this lab), then confirm the change has taken effect — both on the identity inside the IGA engine, and on the corresponding account in the target directory, whether that's OpenLDAP, Active Directory, or any other directory service. The mechanism doesn't change based on which specific tools are involved; what matters is that a change at the authoritative source cascades through to the target automatically, without manual account editing at either end.
+The business risk this addresses is access creep: without an automated Mover process, an employee who changes role typically keeps their old access indefinitely, accumulating permissions beyond what their current role requires — a common and significant finding in access audits.
+
+
 **Leaver workflow:** Built out the second stage of the Joiner-Mover-Leaver lifecycle — the Leaver process — which follows this flow:
 
 An employee's status is changed to Terminated directly in the HR source (SimplifyHR) — the same authoritative source used for the Joiner event.
