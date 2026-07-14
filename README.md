@@ -40,16 +40,6 @@ This reflects how midPoint's resource linking actually works: once a source syst
 
 This demonstrates the core mechanic of automated provisioning: identity data flows one-way from the authoritative HR source, through midPoint's governance and transformation layer, out to the target directory — with no manual account creation required at any point in the chain.
 
-**Rehire / Reactivation workflow**
-
-An employee's status is changed back to Active directly in the HR source (SimplifyHR) — testing the rehire scenario, which is common in real enterprise environments.
-
-![James Anderson reactivated in HR](james%20Anderson%20reactivated%20in%20HR.png)
-
-Re-ran the existing HR reconciliation task in midPoint — the same reused task from both the Joiner and Leaver events, confirming once again that a single reconciliation task handles every lifecycle event rather than needing separate tasks per scenario. midPoint detected the status change and reversed the Leaver action automatically — reactivating the identity and updating its projection to OpenLDAP. Verified directly in phpLDAPadmin that James Anderson's account had moved back from `ou=inactive` to `ou=people`, confirming the account was correctly re-enabled in the target directory, not just internally in midPoint.
-
-This confirms the JML lifecycle works bidirectionally, not just in one direction — the same reconciliation logic that disables an account on termination correctly reverses that action on rehire, without needing separate logic or a new task built specifically for reactivation.
-
 **Mover workflow (conceptual)**
 
 The Mover stage of the JML lifecycle covers an existing employee changing department or role, rather than joining or leaving the organisation. This lab's SimplifyHR portal only supports adding a new employee (Joiner) and terminating one (Leaver) — there's no function to edit an existing employee's department, so this stage isn't backed by screenshots the way Joiner, Leaver, and Reactivation are.
