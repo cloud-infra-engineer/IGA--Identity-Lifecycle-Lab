@@ -76,7 +76,7 @@ An employee's status is changed back to Active directly in the HR source (Simpli
 
 Re-ran the existing HR reconciliation task in midPoint — the same reused task from both the Joiner and Leaver events, confirming once again that a single reconciliation task handles every lifecycle event rather than needing separate tasks per scenario.
 
-![James Anderson reconciled in midPoint](James%20reconciled%20in%20Midpoint.png)
+![James Anderson reconciled in midPoint](James%20Anderson-reconcilled%20in%20Midpoint.png)
 
 midPoint detected the status change and reversed the Leaver action automatically — reactivating the identity and updating its projection to OpenLDAP. Verified directly in phpLDAPadmin that James Anderson's account had moved back from `ou=inactive` to `ou=people`, confirming the account was correctly re-enabled in the target directory, not just internally in midPoint.
 
