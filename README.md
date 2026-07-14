@@ -34,7 +34,6 @@ deprovisioning.
 ![Architecture Diagram](iga-lifecycle-architecture.png)
 
 ## What I Built
-## What I Built
 
 I configured midPoint as the identity governance engine sitting between a 
 simulated HR source system (CSV-based) and an OpenLDAP directory as the target.
