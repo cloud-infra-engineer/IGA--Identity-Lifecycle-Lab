@@ -25,6 +25,7 @@ Directory, Entra ID). What this project demonstrates is the underlying
 identity governance logic — a defined source of truth, automated 
 reconciliation, and lifecycle-driven provisioning — rather than proficiency 
 in any single vendor's product.
+
 ## Scope Note
 This project focuses on the core mechanics of identity governance and lifecycle 
 automation — specifically, automated Joiner-Mover-Leaver (JML) provisioning and 
