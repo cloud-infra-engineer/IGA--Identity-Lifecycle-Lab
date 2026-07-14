@@ -34,20 +34,12 @@ A second reconciliation task, run against the OpenLDAP resource, pushes that ide
 
 ![Lucas Weber in LDAP](Lucas-Webber-ldap.png)
 
-**Note on automatic provisioning:** Although the lab instructions describe reconciling HR and then separately reconciling OpenLDAP as two distinct manual steps, in practice a single HR reconciliation task was sufficient to both create the identity in midPoint and automatically provision the corresponding account into OpenLDAP — confirmed by checking the account directly in phpLDAPadmin. 
+**Note on automatic provisioning:** Although the lab instructions describe reconciling HR and then separately reconciling OpenLDAP as two distinct manual steps, in practice a single HR reconciliation task was sufficient to both create the identity in midPoint and automatically provision the corresponding account into OpenLDAP — confirmed by checking the account directly in phpLDAPadmin.
 
 This reflects how midPoint's resource linking actually works: once a source system is reconciled, provisioning to any linked target resources happens automatically as part of that same lifecycle event, rather than requiring a manual reconciliation per target. This is arguably the more realistic model of automation — a single trigger event (a new HR record) cascades through the system without requiring manual intervention at each downstream target.
 
 This demonstrates the core mechanic of automated provisioning: identity data flows one-way from the authoritative HR source, through midPoint's governance and transformation layer, out to the target directory — with no manual account creation required at any point in the chain.
 
-Neilda. Where did you get Elda from? Do you understand James Anderson reactively in HR? Where is not then did he say held up?Let me reset completely and just work from what's confirmed right now, nothing else.
-You've confirmed these two filenames, exactly:
-
-james Anderson reactivated in HR.png
-James Anderson-reconcilled in Midpoint.png
-
-That's it — no LDAP file mentioned or confirmed by you in this reset. Is there a third image for this reactivation step at all, or is it just these two? Please answer just that one question.Turkish starches give you gyms under some reactive in HR. That's what I need to put in Readme. The reconciled midpoint is already done.Understood — so only one new image needs adding: james Anderson reactivated in HR.png. The reconciled-in-midPoint one is already in there from before.
-Here's the text to paste in for the Rehire/Reactivation section, with just that one image included:
 **Rehire / Reactivation workflow**
 
 An employee's status is changed back to Active directly in the HR source (SimplifyHR) — testing the rehire scenario, which is common in real enterprise environments.
@@ -57,11 +49,7 @@ An employee's status is changed back to Active directly in the HR source (Simpli
 Re-ran the existing HR reconciliation task in midPoint — the same reused task from both the Joiner and Leaver events, confirming once again that a single reconciliation task handles every lifecycle event rather than needing separate tasks per scenario. midPoint detected the status change and reversed the Leaver action automatically — reactivating the identity and updating its projection to OpenLDAP. Verified directly in phpLDAPadmin that James Anderson's account had moved back from `ou=inactive` to `ou=people`, confirming the account was correctly re-enabled in the target directory, not just internally in midPoint.
 
 This confirms the JML lifecycle works bidirectionally, not just in one direction — the same reconciliation logic that disables an account on termination correctly reverses that action on rehire, without needing separate logic or a new task built specifically for reactivation.
-Paste this in as the Rehire/Reactivation section (after Leaver's design principle paragraphs, before the reconciliation frequency note), and double-check the filename matches exactly (james Anderson reactivated in HR.png, lowercase j, capital A) before committing.It's all done. Um, short of the mover process, I'm not sure how to work on that now because, um, the person in the community, as it got back to me on the mover process. So I'm just waiting on that back now. Um, if you can tell me how to do it, then we could put that in there. otherwise, we'll just have to put a paragraph in our computer to move the thing.That's fine either way — you're not stuck regardless of what he comes back with.
-If he does come back with a working method (e.g., editing the raw CSV directly, or some hidden edit function in the portal you haven't found), we can add real screenshots and complete it properly, same as Joiner/Leaver/Reactivation.
-If he doesn't respond, or confirms there's no way to do it in this lab's tooling — you already have a solid conceptual write-up ready to go (the Mover section plus the governance/oversight closing note we drafted earlier), which honestly explains the mechanism and the tooling limitation without needing screenshots. That's a completely legitimate way to close out this section — you've proven the identical underlying mechanism twice already (Joiner, Leaver, and now Reactivation triples it), so a reader has every reason to trust your conceptual explanation of Mover, since you've demonstrated you understand exactly how reconciliation and provisioning work in practice.
-Given you've now got Joiner, Leaver, and Reactivation all fully proven with real evidence, the lab is in genuinely strong shape either way. I'd suggest giving him a day or two to respond, and if nothing comes back, just paste in the conceptual Mover section and governance note we already wrote, and call Lab 1 finished. Want me to pull those two sections together into one final block now, ready to go the moment you decide to close it out?For account list to move or do it myself, the the joiner lever and the rehire, the mover is exactly the same concept, isn't it? So it's not it's not any different than anything else. We'll just have to we'll just have to write then. I'll tell you what, let's... can can we can we do it now?Yes, let's do it now — you're right, the mechanism is identical, you've already proven it three times over (Joiner, Leaver, Reactivation), so there's no reason to keep waiting.
-Here's the combined Mover section plus the governance closing note, ready to paste in as one block:
+
 **Mover workflow (conceptual)**
 
 The Mover stage of the JML lifecycle covers an existing employee changing department or role, rather than joining or leaving the organisation. This lab's SimplifyHR portal only supports adding a new employee (Joiner) and terminating one (Leaver) — there's no function to edit an existing employee's department, so this stage isn't backed by screenshots the way Joiner, Leaver, and Reactivation are.
@@ -70,8 +58,11 @@ The process itself, however, is identical in principle to what's already been de
 
 The business risk this addresses is access creep: without an automated Mover process, an employee who changes role typically keeps their old access indefinitely, accumulating permissions beyond what their current role requires — a common and significant finding in access audits.
 
-The mechanism doesn't change based on which specific tools are involved; what matters is that a change at the authoritative source cascades through to the target automatically, without manual account editing at either end.
-The business risk this addresses is access creep: without an automated Mover process, an employee who changes role typically keeps their old access indefinitely, accumulating permissions beyond what their current role requires — a common and significant finding in access audits.
+**A note on automation's blind spot**
+
+Automation solves the problem of manual processes not keeping pace with scale, but it introduces a different risk: because the process runs in the background, nobody sees it happening day to day, and it's easy to assume it's working correctly simply because nobody's had to think about it. A Mover event that silently adds new group access without removing the old is precisely the kind of thing that can go unnoticed for a long time in an automated system — someone accumulates permissions from two or three past roles they no longer need, and because no human is manually reviewing each change, it's rarely caught until an access review or an audit surfaces it.
+
+This is why automation on its own isn't a complete solution — it needs an oversight layer, typically in the form of periodic access reviews and entitlement certification (available in tools like midPoint, Entra ID Governance, or equivalent, depending on the platform in use). Automation handles the *speed and consistency* problem; governance oversight handles the *"is this still correct"* problem. Neither replaces the other. This is also why access reviews were named as a deliberate scope boundary earlier in this project — they represent the next layer this lifecycle would need in a real enterprise deployment.
 
 
 **Leaver workflow:** Built out the second stage of the Joiner-Mover-Leaver lifecycle — the Leaver process — which follows this flow:
