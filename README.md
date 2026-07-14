@@ -24,18 +24,15 @@ I configured midPoint as the identity governance engine sitting between a simula
 
 **Connectivity setup:** Configured and tested both resource connections in midPoint — the HR CSV source and the OpenLDAP target — confirming successful communication with each before building any workflow logic on top ("Test Connection succeeded" on both).
 
-**Joiner workflow (in progress):** Built out the first stage of the Joiner-Mover-Leaver lifecycle — the Joiner process — which follows this flow:
+**Joiner workflow:** Built out the first stage of the Joiner-Mover-Leaver lifecycle — the Joiner process — which follows this flow:
 
-1. A new employee record is added directly in the HR source (CSV) — the system of record for identity data (name, department, role, etc.).
-2. An HR reconciliation task in midPoint pulls that new record in, creating the corresponding identity inside midPoint.
-3. Verified the new identity appeared correctly in midPoint after running the HR reconciliation task.
-   
- ![Lucas Weber Joiner Event](Lucas%20Webb%20-%20Joiner.png)
+A new employee record is added directly in the HR source (CSV) — the system of record for identity data (name, department, role, etc.). An HR reconciliation task in midPoint pulls that new record in, creating the corresponding identity inside midPoint. Verified the new identity appeared correctly in midPoint after running the HR reconciliation task.
 
-5. A second reconciliation task, run against the OpenLDAP resource, pushes that identity out to the LDAP directory, creating the actual account.
+![Lucas Weber Joiner Event](Lucas%20Webb%20-%20Joiner.png)
 
-  ![Lucas Weber in LDAP](Lucas-Webber-ldap.png)
-7. Verified the account appeared correctly in LDAP using an LDAP browser.
+A second reconciliation task, run against the OpenLDAP resource, pushes that identity out to the LDAP directory, creating the actual account. Verified the account appeared correctly in LDAP using an LDAP browser.
+
+![Lucas Weber in LDAP](Lucas-Webber-ldap.png)
 
 **Note on automatic provisioning:** Although the lab instructions describe reconciling HR and then separately reconciling OpenLDAP as two distinct manual steps, in practice a single HR reconciliation task was sufficient to both create the identity in midPoint and automatically provision the corresponding account into OpenLDAP — confirmed by checking the account directly in phpLDAPadmin. This reflects how midPoint's resource linking actually works: once a source system is reconciled, provisioning to any linked target resources happens automatically as part of that same lifecycle event, rather than requiring a manual reconciliation per target. This is arguably the more realistic model of automation — a single trigger event (a new HR record) cascades through the system without requiring manual intervention at each downstream target.
 
@@ -43,31 +40,29 @@ This demonstrates the core mechanic of automated provisioning: identity data flo
 
 **Leaver workflow:** Built out the second stage of the Joiner-Mover-Leaver lifecycle — the Leaver process — which follows this flow:
 
-1. An employee's status is changed to Terminated directly in the HR source (SimplifyHR) — the same authoritative source used for the Joiner event.
+An employee's status is changed to Terminated directly in the HR source (SimplifyHR) — the same authoritative source used for the Joiner event.
 
 ![James Anderson terminated in SimplifyHR](james%20anderson%20terminated-midpoint.png)
 
-2. Re-ran the existing HR reconciliation task in midPoint (the same task created for the Joiner event — no new task needed, confirming these tasks are reusable across all lifecycle events, not single-use).
+Re-ran the existing HR reconciliation task in midPoint (the same task created for the Joiner event — no new task needed, confirming these tasks are reusable across all lifecycle events, not single-use).
 
 ![James Anderson reconciled in midPoint](James%20Anderson-reconcilled%20in%20Midpoint.png)
 
-3. midPoint detected the status change and triggered the Leaver workflow automatically — disabling the identity and updating its projection to OpenLDAP.
+midPoint detected the status change and triggered the Leaver workflow automatically — disabling the identity and updating its projection to OpenLDAP.
 
 ![James disabled in midPoint](James%20disabled%20in%20Midpoint.png)
 
-4. Verified in midPoint (Users → All Users) that James Anderson's status now shows Disabled, and confirmed via the Projections tab that the OpenLDAP projection reflected this.
-5. Verified directly in phpLDAPadmin that James Anderson's account had moved from `ou=people` to `ou=inactive` — confirming the change had actually propagated to the target directory, not just midPoint's internal record.
+Verified in midPoint (Users → All Users) that James Anderson's status now shows Disabled, and confirmed via the Projections tab that the OpenLDAP projection reflected this. Verified directly in phpLDAPadmin that James Anderson's account had moved from `ou=people` to `ou=inactive` — confirming the change had actually propagated to the target directory, not just midPoint's internal record.
 
 ![James inactive in LDAP](James%20inactive%20in%20ldap.png)
 
 **Design principle — disable, don't delete:** The account was not deleted on termination, and this is deliberate rather than a limitation. Standard enterprise practice is to disable an account immediately on termination, then delete it only after a defined retention period (commonly 30–90 days). This balances two competing risks: an active account for a departed employee is a security exposure, but immediate deletion removes the ability to investigate, recover data, or audit activity if a question arises after the person has left. Moving the account to an inactive state (rather than deleting it) achieves the security goal immediately while preserving the option to investigate or reverse the action during the retention window.
 
 This reinforces the same underlying principle demonstrated in the Joiner workflow: HR remains the single source of truth, and every downstream system — midPoint, then LDAP — updates automatically in response to a change at the source, without manual intervention at the target.
-**Design principle — disable, don't delete:** The account was not deleted on termination, and this is deliberate rather than a limitation. Standard enterprise practice is to disable an account immediately on termination, then delete it only after a defined retention period (commonly 30–90 days). This balances two competing risks: an active account for a departed employee is a security exposure, but immediate deletion removes the ability to investigate, recover data, or audit activity if a question arises after the person has left. Moving the account to an inactive state (rather than deleting it) achieves the security goal
 
 **Design consideration — reconciliation frequency:** In this lab, reconciliation was triggered manually to clearly observe each stage of the JML flow as it happened. In a production environment, this would typically run on a scheduled interval rather than manually — the appropriate frequency depends on the organization's size and rate of change. A large enterprise with high hire/leaver volume might reconcile every 15–30 minutes to minimize the window where access is out of date, whereas a smaller organization might run it nightly. This is a tuning decision balanced against system load versus how urgently new access or account disablement needs to take effect.
 
-*(Mover and Leaver stages, plus attribute-mapping detail and any further transformation logic required, to be added as the lab progresses.)*
+*(Mover stage to be added — see note below on why this couldn't be fully demonstrated in this lab's HR portal.)*
 
 ## Troubleshooting & Problems I Hit
 
