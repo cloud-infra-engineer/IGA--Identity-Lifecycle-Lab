@@ -57,6 +57,8 @@ Joiner-Mover-Leaver lifecycle — the Joiner process — which follows this flow
    that identity out to the LDAP directory, creating the actual account.
 5. Verified the account appeared correctly in LDAP using an LDAP browser.
 
+   This demonstrates the core mechanic of automated provisioning
+
 This demonstrates the core mechanic of automated provisioning: identity data 
 flows one-way from the authoritative HR source, through midPoint's governance 
 and transformation layer, out to the target directory — with no manual account 
