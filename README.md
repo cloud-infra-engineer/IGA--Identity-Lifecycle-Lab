@@ -33,7 +33,9 @@ I configured midPoint as the identity governance engine sitting between a simula
  ![Lucas Weber Joiner Event](Lucas%20Webb%20-%20Joiner.png)
 
 5. A second reconciliation task, run against the OpenLDAP resource, pushes that identity out to the LDAP directory, creating the actual account.
-6. Verified the account appeared correctly in LDAP using an LDAP browser.
+
+   ![Lucas Weber in LDAP](lucas-weber-ldap.png)
+7. Verified the account appeared correctly in LDAP using an LDAP browser.
 
 **Note on automatic provisioning:** Although the lab instructions describe reconciling HR and then separately reconciling OpenLDAP as two distinct manual steps, in practice a single HR reconciliation task was sufficient to both create the identity in midPoint and automatically provision the corresponding account into OpenLDAP — confirmed by checking the account directly in phpLDAPadmin. This reflects how midPoint's resource linking actually works: once a source system is reconciled, provisioning to any linked target resources happens automatically as part of that same lifecycle event, rather than requiring a manual reconciliation per target. This is arguably the more realistic model of automation — a single trigger event (a new HR record) cascades through the system without requiring manual intervention at each downstream target.
 
