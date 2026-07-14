@@ -72,7 +72,7 @@ Verified in midPoint (Users → All Users) that James Anderson's status now show
 
 An employee's status is changed back to Active directly in the HR source (SimplifyHR) — testing the rehire scenario, which is common in real enterprise environments.
 
-![James Anderson reactivated in HR](james%20anderson%20reactivated%20in%20HR.png)
+![James Anderson reactivated in HR](james%20Anderson%20reactivated%20in%20HR.png)
 
 Re-ran the existing HR reconciliation task in midPoint — the same reused task from both the Joiner and Leaver events, confirming once again that a single reconciliation task handles every lifecycle event rather than needing separate tasks per scenario.
 
