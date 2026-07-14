@@ -101,67 +101,7 @@ The lab guide's instructions for creating and running an HR reconciliation task 
 
 Resolved by working through each tab systematically to identify the functional equivalent of each step described in the guide, rather than relying on exact button names. Confirmed success by checking that the HR record created earlier correctly appeared in midPoint's Users section after running the task.
 
-## Business Outcome
 
-Automated provisioning and deprovisioning eliminates the manual gap that leads to orphaned accounts, and provides a full audit trail of every identity change — directly reducing the compliance risk described above.
-That's the full replacement — copy everything between the ``` markers and paste it in over the entire current README content.One second. Right. I copied it. Now it... something... a lot of it has been taken off. I can only go get get down to the move of workflow or something's happened while I've copied it, and it hasn't copied everything.Diagnosed content truncation issue and strategized clarification approachDiagnosed content truncation issue and strategized clarification approachThat happens sometimes with very long copy-paste operations, especially on a trackpad where selection can get interrupted partway through.
-Rather than fight a full one-shot copy again, let's split it into two halves so it's more manageable:
-Paste 1: everything from the top through the end of the Mover section (which you already have).
-Paste 2 (still needed): everything from the Leaver section onward. Here it is:
-markdown**Leaver workflow:** Built out the final stage of the Joiner-Mover-Leaver lifecycle — the Leaver process — which follows this flow:
-
-An employee's status is changed to Terminated directly in the HR source (SimplifyHR) — the same authoritative source used for the Joiner event.
-
-![James Anderson terminated in SimplifyHR](james%20anderson%20terminated-midpoint.png)
-
-Re-ran the existing HR reconciliation task in midPoint (the same task created for the Joiner event — no new task needed, confirming these tasks are reusable across all lifecycle events, not single-use).
-
-![James Anderson reconciled in midPoint](James%20Anderson-reconcilled%20in%20Midpoint.png)
-
-midPoint detected the status change and triggered the Leaver workflow automatically — disabling the identity and updating its projection to OpenLDAP.
-
-![James disabled in midPoint](James%20disabled%20in%20Midpoint.png)
-
-Verified in midPoint (Users → All Users) that James Anderson's status now shows Disabled, and confirmed via the Projections tab that the OpenLDAP projection reflected this. Verified directly in phpLDAPadmin that James Anderson's account had moved from `ou=people` to `ou=inactive` — confirming the change had actually propagated to the target directory, not just midPoint's internal record.
-
-![James inactive in LDAP](James%20inactive%20in%20ldap.png)
-
-**Design principle — disable, don't delete:** The account was not deleted on termination, and this is deliberate rather than a limitation. Standard enterprise practice is to disable an account immediately on termination, then delete it only after a defined retention period (commonly 30–90 days). This balances two competing risks: an active account for a departed employee is a security exposure, but immediate deletion removes the ability to investigate, recover data, or audit activity if a question arises after the person has left. Moving the account to an inactive state (rather than deleting it) achieves the security goal immediately while preserving the option to investigate or reverse the action during the retention window.
-
-This reinforces the same underlying principle demonstrated in the Joiner workflow: HR remains the single source of truth, and every downstream system — midPoint, then LDAP — updates automatically in response to a change at the source, without manual intervention at the target.
-
-**Rehire / Reactivation workflow:** An employee's status is changed back to Active directly in the HR source (SimplifyHR) — testing the rehire scenario, which is common in real enterprise environments.
-
-![James Anderson reactivated in HR](james%20Anderson%20reactivated%20in%20HR.png)
-
-Re-ran the existing HR reconciliation task in midPoint — the same reused task from both the Joiner and Leaver events, confirming once again that a single reconciliation task handles every lifecycle event rather than needing separate tasks per scenario. midPoint detected the status change and reversed the Leaver action automatically — reactivating the identity and updating its projection to OpenLDAP. Verified directly in phpLDAPadmin that James Anderson's account had moved back from `ou=inactive` to `ou=people`, confirming the account was correctly re-enabled in the target directory, not just internally in midPoint.
-
-This confirms the JML lifecycle works bidirectionally, not just in one direction — the same reconciliation logic that disables an account on termination correctly reverses that action on rehire, without needing separate logic or a new task built specifically for reactivation.
-
-**Design consideration — reconciliation frequency:** In this lab, reconciliation was triggered manually to clearly observe each stage of the JML flow as it happened. In a production environment, this would typically run on a scheduled interval rather than manually — the appropriate frequency depends on the organization's size and rate of change. A large enterprise with high hire/leaver volume might reconcile every 15–30 minutes to minimize the window where access is out of date, whereas a smaller organization might run it nightly. This is a tuning decision balanced against system load versus how urgently new access or account disablement needs to take effect.
-
-**A note on automation's blind spot:** Automation solves the problem of manual processes not keeping pace with scale, but it introduces a different risk: because the process runs in the background, nobody sees it happening day to day, and it's easy to assume it's working correctly simply because nobody's had to think about it. A Mover event that silently adds new group access without removing the old is precisely the kind of thing that can go unnoticed for a long time in an automated system — someone accumulates permissions from two or three past roles they no longer need, and because no human is manually reviewing each change, it's rarely caught until an access review or an audit surfaces it.
-
-This is why automation on its own isn't a complete solution — it needs an oversight layer, typically in the form of periodic access reviews and entitlement certification (available in tools like midPoint, Entra ID Governance, or equivalent, depending on the platform in use). Automation handles the speed and consistency problem; governance oversight handles the "is this still correct" problem. Neither replaces the other. This is also why access reviews were named as a deliberate scope boundary earlier in this project — they represent the next layer this lifecycle would need in a real enterprise deployment.
-
-## Troubleshooting & Problems I Hit
-
-**Issue: SSH access unclear (no username specified)**
-The lab guide said to SSH in using the IP and port, but didn't clearly state the login username — it was buried in a sentence rather than listed clearly. Had to reread the instructions carefully to spot that "using root" meant the username was root, not just descriptive text. Lesson: always check for a username explicitly before assuming SSH will prompt for one.
-
-**Issue: PuTTY copy-paste not working via trackpad**
-Struggled to copy commands from the browser instructions into the PuTTY terminal — right-click paste didn't work reliably on the laptop trackpad. Resolved by using the keyboard shortcut Shift+Insert to paste directly into PuTTY instead of relying on trackpad right-click/two-finger tap.
-
-**Issue: Login attempts failing / temporary lockout**
-Got locked out of SSH login temporarily after a few failed password attempts — standard SSH brute-force protection, not a fault with the VM. Waited a short time before retrying rather than repeatedly attempting, which resolved it once the correct username/password combination was confirmed.
-
-**Issue: midPoint service not showing as "up" after starting the lab**
-After running the start script, phpLDAPadmin and SimplifyHR came up immediately, but midPoint did not, and the web console at localhost:8080/midpoint returned a connection error. This wasn't an actual failure — midPoint takes noticeably longer to boot than the other services on first startup, since it initializes its own internal database and connectors. Re-checking the status script and refreshing the browser after waiting a few minutes confirmed midPoint had come up successfully. Lesson: don't assume a service has failed just because it isn't immediately up — check again after allowing more startup time, especially for Java-based platforms like midPoint.
-
-**Issue: Reconciliation task creation UI substantially different from lab guide**
-The lab guide's instructions for creating and running an HR reconciliation task (Resources → SimplifyHR → Run Task, with fields for Task name and a Schedule → Run now option) didn't match the current midPoint UI at almost every step. In my version, task creation is done via a separate "Server Tasks" menu → "New Task" → selecting "Reconciliation" as the task type, with configuration split across Basic, Activity, Schedule, Advanced options, and Operational attributes tabs. There was no visible "Run now" option under Schedule, and no dedicated task name field as described — instead, a "Save and Run" button under Operational attributes handled both actions at once.
-
-Resolved by working through each tab systematically to identify the functional equivalent of each step described in the guide, rather than relying on exact button names. Confirmed success by checking that the HR record created earlier correctly appeared in midPoint's Users section after running the task.
 
 ## Business Outcome
 
