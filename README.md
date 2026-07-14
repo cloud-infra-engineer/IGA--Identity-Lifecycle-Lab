@@ -29,7 +29,8 @@ I configured midPoint as the identity governance engine sitting between a simula
 1. A new employee record is added directly in the HR source (CSV) — the system of record for identity data (name, department, role, etc.).
 2. An HR reconciliation task in midPoint pulls that new record in, creating the corresponding identity inside midPoint.
 3. Verified the new identity appeared correctly in midPoint after running the HR reconciliation task.
-   Lucas Weber Joiner Event](Lucas - Webb.png)
+   
+   ![Lucas Webber Joiner Event](Lucas - Webb.png)
 
 5. A second reconciliation task, run against the OpenLDAP resource, pushes that identity out to the LDAP directory, creating the actual account.
 6. Verified the account appeared correctly in LDAP using an LDAP browser.
