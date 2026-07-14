@@ -1,11 +1,17 @@
 # Identity Governance & Lifecycle Automation (IGA Lab)
 
 ## Business Problem
-Manual onboarding and offboarding processes create security and compliance risk. 
-When employees join, move roles, or leave, manual account creation/updates/removal 
-is slow and error-prone — commonly resulting in orphaned accounts (active credentials 
-left behind after someone leaves), which are a frequent finding in security audits 
-and a real attack vector.
+
+Manual account provisioning is a reasonable way to manage identity in a small 
+organisation — with ten or twenty employees, it's realistic to track who 
+joins, moves role, or leaves by hand, since the volume of change is low 
+enough to manage manually. That changes at scale. Once an organisation grows 
+to hundreds or thousands of employees, manual onboarding and offboarding 
+processes create real security and compliance risk. When employees join, 
+move roles, or leave, manual account creation/updates/removal becomes slow 
+and error-prone — commonly resulting in orphaned accounts (active credentials 
+left behind after someone leaves), which are a frequent finding in security 
+audits and a real attack vector.
 
 ## Solution Overview
 
