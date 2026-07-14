@@ -82,6 +82,8 @@ Issue: midPoint service not showing as "up" after starting the lab
 After running the start script, phpLDAPadmin and SimplifyHR came up immediately, but midPoint did not, and the web console at localhost:8080/midpoint returned a connection error. This wasn't an actual failure — midPoint takes noticeably longer to boot than the other services on first startup, since it initializes its own internal database and connectors. Re-checking the status script and refreshing the browser after waiting a few minutes confirmed midPoint had come up successfully. Lesson: don't assume a service has failed just because it isn't immediately up — check again after allowing more startup time, especially for Java-based platforms like midPoint.
 Issue: Reconciliation task creation UI substantially different from lab guide
 
+Issue: Reconciliation task creation UI substantially different from lab guide
+
 The lab guide's instructions for creating and running an HR reconciliation task 
 (Resources → SimplifyHR → Run Task, with fields for Task name and a Schedule → 
 Run now option) didn't match the current midPoint UI at almost every step. In 
