@@ -86,4 +86,4 @@ Resolved by working through each tab systematically to identify the functional e
 ## Business Outcome
 
 Automated provisioning and deprovisioning eliminates the manual gap that leads to orphaned accounts, and provides a full audit trail of every identity change — directly reducing the compliance risk described above.
-To apply this: open README.md, click edit, select all existing text and delete it, then paste this whole block in, and commit. That replaces everything in one clean pass rather than three separate edits.
+
