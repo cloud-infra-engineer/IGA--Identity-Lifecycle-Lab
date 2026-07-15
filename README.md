@@ -1,5 +1,14 @@
 # Identity Governance & Lifecycle Automation (IGA Lab)
 
+## Executive Summary
+
+This project demonstrates an automated identity lifecycle workflow using midPoint as an Identity Governance and Administration (IGA) platform, a simulated HR system as the authoritative identity source, and OpenLDAP as the target directory.
+
+The objective was to design and implement a Joiner-Mover-Leaver (JML) process that automates identity creation, updates, and deactivation while exploring the governance considerations around automation, reconciliation, access lifecycle management, and non-human identities.
+
+The project focuses on the underlying IAM principles rather than any single vendor technology. The same lifecycle concepts apply across enterprise platforms such as Microsoft Entra ID, SailPoint, and other IGA solutions.
+
+
 ## Business Problem
 
 Manual account provisioning is a reasonable way to manage identity in a small organisation — with ten or twenty employees, it's realistic to track who joins, moves role, or leaves by hand, since the volume of change is low enough to manage manually. That changes at scale. Once an organisation grows to hundreds or thousands of employees, manual onboarding and offboarding processes create real security and compliance risk. When employees join, move roles, or leave, manual account creation/updates/removal becomes slow and error-prone — commonly resulting in orphaned accounts (active credentials left behind after someone leaves), which are a frequent finding in security audits and a real attack vector.
