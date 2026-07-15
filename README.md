@@ -121,4 +121,4 @@ Resolved by working through each tab systematically to identify the functional e
 
 ## Business Outcome
 
-Automated provisioning and deprovisioning eliminates the manual gap that leads to orphaned accounts, and provides a full audit trail of every identity change — directly reducing the compliance risk described above.
+Automated provisioning and deprovisioning eliminates the manual gap that leads to orphaned accounts, and provides a full audit trail of every identity change — directly reducing the compliance risk described in the Business Problem. Beyond the core JML lifecycle, this project also surfaced two risks that automation alone doesn't solve: the need for ongoing governance oversight (access reviews) to catch access creep that automation can otherwise hide, and the existence of Non-Human Identities that sit entirely outside the JML process — accounts with no HR record, no audit trail, and full write access to the target directory. A complete identity governance solution needs to account for both: automating the human lifecycle, and separately discovering and governing the non-human accounts that automation itself depends on.
